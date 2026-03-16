@@ -9,7 +9,8 @@ const Header = () => {
 
   return (
     <header>
-      <div className="relative z-[21] flex items-center justify-between lg:px-16 lg:py-6">
+
+      <div className="relative z-[21] flex items-center justify-between lg:px-16 lg:py-6" >
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Image
@@ -17,7 +18,7 @@ const Header = () => {
             width={230}
             height={60}
             alt="logo"
-            className="w-[480px] main-logo" /// added 480 instead 230 using external css
+            className="w-[230px] main-logo" /// added 480 instead 230 using external css
           />
         </div>
 
@@ -72,6 +73,7 @@ const Header = () => {
           </ul>
         </nav>
       </div>
+
     </header>
   );
 };
