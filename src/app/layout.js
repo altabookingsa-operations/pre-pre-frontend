@@ -7,6 +7,7 @@ import SessionUID from "@/components/SessionUID";
 // import PageViewTracker from '@/components/PageViewTracker';
 // import { Provider } from "../context/index.js";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
+import LoginGate from "@/components/home/LoginGate";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,13 +47,14 @@ export default function RootLayout({ children }) {
       >
         <ReactQueryProvider>
           {/* <Provider> */}
-            <SessionUID />
-            {/* <PageViewTracker /> */}
+          <SessionUID />
+          {/* <PageViewTracker /> */}
 
-            <div
-              className="relative pb-[50px] lg:pb-[70px] w-full text-white bg-cover bg-center main-pre-pre-lnch-start"
-              style={{ backgroundImage: "url(/images/banner-img.png)" }}
-            >
+          <div
+            className="relative pb-[50px] lg:pb-[70px] w-full text-white bg-cover bg-center main-pre-pre-lnch-start"
+            style={{ backgroundImage: "url(/images/banner-img.png)" }}
+          >
+            <LoginGate>
               <Header />
 
               {children}
@@ -91,9 +93,10 @@ export default function RootLayout({ children }) {
                 })(jQuery);
 
               });
-              `}
+              `}npm install sweetalert2@11.26.18
               </Script> */}
-            </div>
+            </LoginGate>
+          </div>
           {/* </Provider> */}
         </ReactQueryProvider>
         {/* <Footer /> */}
