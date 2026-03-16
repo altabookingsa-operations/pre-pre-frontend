@@ -8,7 +8,6 @@ const PASSWORD = process.env.NEXT_PUBLIC_LOGIN_PASSWORD || "";
 
 export default function LoginGate({ children }) {
   const [loggedIn, setLoggedIn] = useState(false);
-  //   const [loading, setLoading] = useState(true);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +15,6 @@ export default function LoginGate({ children }) {
   useEffect(() => {
     const auth = sessionStorage.getItem("auth");
     setLoggedIn(auth === "true");
-    // setLoading(false);
   }, []);
 
   const handleLogin = (e) => {
@@ -42,7 +40,6 @@ export default function LoginGate({ children }) {
     }
   };
 
-  //   if (loading) return null;
   if (loggedIn === null) return null;
   if (!loggedIn) {
     return (
