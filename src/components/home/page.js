@@ -1,22 +1,10 @@
 "use client";
-// import Image from "next/image";
-// import { useRef } from "react";
+
 export default function Homepage() {
-  // const textareaRef = useRef(null);
-
-  // const autoResize = (e) => {
-  //   const el = e.target;
-
-  //   el.style.height = "0px";
-  //   el.style.height = el.scrollHeight + "px";
-  // };
   return (
     <div>
       {/* Home page Content */}
-      {/* <div
-        className="relative pb-[100px] lg:pb-[370px] w-full text-white bg-cover bg-center"
-        style={{ backgroundImage: "url(/images/banner-img.png)" }}
-      > */}
+
       <div className="flex flex-col items-center text-center px-4 lg:px-6 mt-5 lg:mt-[40px]">
         {/* Glass Title */}
         <div
@@ -53,10 +41,6 @@ export default function Homepage() {
         {/* SEARCH */}
         <div className="flex gap-5 w-full max-w-5xl justify-center">
           <div className="flex items-baseline bg-white rounded-[28px] overflow-hidden shadow-[0_1px_25px_12px_#01bdd673] w-[88%]">
-            {/* <textarea
-              placeholder="Describe the trip you want"
-              className="autosize flex-1 px-4 pr-0 lg:px-6 py-3 lg:py-5 text-gray-700 outline-none w-[100%] resize-none overflow-hidden"
-            /> */}
             <textarea
               rows={1}
               onInput={(e) => {
