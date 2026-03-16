@@ -5,7 +5,7 @@ import Header from "@/components/header/page";
 import Script from "next/script";
 import SessionUID from "@/components/SessionUID";
 // import PageViewTracker from '@/components/PageViewTracker';
-import { Provider } from "../context/index.js";
+// import { Provider } from "../context/index.js";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
 
 const geistSans = Geist({
@@ -45,7 +45,7 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
       >
         <ReactQueryProvider>
-          <Provider>
+          {/* <Provider> */}
             <SessionUID />
             {/* <PageViewTracker /> */}
 
@@ -94,7 +94,7 @@ export default function RootLayout({ children }) {
               `}
               </Script> */}
             </div>
-          </Provider>
+          {/* </Provider> */}
         </ReactQueryProvider>
         {/* <Footer /> */}
       </body>
