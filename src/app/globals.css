@@ -36,6 +36,14 @@ nav ul {
   height: 55px;
   width: 70px;
 }
+.tag-flex-bx .relative{
+  margin-left: 20px;
+
+}
+.tag-flex-bx .relative:first-child{
+    margin-left: 0px;
+  padding-left: 0px;
+}
 
 @media only screen and (max-width: 915px) {
   .nav-mobile {
@@ -83,10 +91,21 @@ nav ul {
     margin-left: -5px;
   }
   .lft_arr {
-    display: none;
+    display: block;
   }
 }
-@media screen and (min-width: 915px) {
+@media screen and (max-width: 767px) {
+  .lft_arr {
+    display: block;
+    top: auto;
+    bottom: -22px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+       transform: rotate(90deg);
+       pointer-events: none;
+  }
+
 }
 #navbar-toggle {
   position: absolute;

@@ -78,18 +78,18 @@ const SearchPageResult = ({ citiesData, answerData }) => {
                         hrs away
                       </span>
                     </p>
-                    <div className="flex gap-6 font-regular text-[16px] py-[20px]">
+                    <div className="tag-flex-bx gap-6 font-regular text-[16px] py-[20px]">
                       {city?.tags?.length &&
                         city.tags.slice(0, 3).map((tag, i) => (
-                          <div className="relative" key={i}>
+                          <div className="relative inline-block" key={i}>
                             {tag}{" "}
-                            {i + 1 < 3 && (
-                              <div className="absolute w-[6px] h-[6px] bg-[#3EE5FF] rounded-[50%] right-[-15px] top-[40%]" />
+                            {i !== 0 && (
+                              <div className="absolute w-[6px] h-[6px] bg-[#3EE5FF] rounded-[50%] left-[-13px] top-[40%]" />
                             )}
                           </div>
                         ))}
                     </div>
-                    <button className="p-[10px] border border-[#1190A2] bg-gradient-to-r from-[#1D2E4A] to-[#041029] rounded-[13px] font-medium text-[16px] flex items-center gap-3">
+                    <button className="p-[10px] border border-[#1190A2] bg-gradient-to-r from-[#1D2E4A] to-[#041029] rounded-[13px] font-medium text-[15px] flex items-center gap-3">
                       <img src="/images/tick.png" alt="" /> Claim Your Boarding
                       Pass
                     </button>
