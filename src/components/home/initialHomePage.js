@@ -83,6 +83,7 @@ export default function InitialHomepage({
             {(searchQuery || transcript) && (
               <button
                 className="px-3 lg:px-6 text-gray-700 relative top-[10px]"
+                style={{cursor:"pointer"}}
                 onClick={() => {
                   searchHandler(searchQuery, coords);
                 }}
@@ -97,6 +98,7 @@ export default function InitialHomepage({
             style={{
               backgroundImage: "url('/images/mike-back.png')",
               boxShadow: "0 2px 15px 0 rgba(0,0,0)",
+              cursor: "pointer",
             }}
             onClick={startListening}
             onTouchEnd={SpeechRecognition.stopListening}

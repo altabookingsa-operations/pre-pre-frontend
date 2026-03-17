@@ -164,11 +164,11 @@ nav ul {
 @media (max-width: 990px){
    .pplnch_anz_boxes1{
     top: auto!important;
-    bottom: 30px;
+    bottom: -55px;
   }
    .pplnch_anz_boxes2{
     top: auto!important;
-    bottom: 30px;
+    bottom: -55px;
   }
 }
 @keyframes glow {
