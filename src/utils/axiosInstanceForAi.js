@@ -7,10 +7,10 @@ import storageInstance from "./storageInstance";
 const axiosInstanceAi = axios.create({
   baseURL: process.env.NEXT_PUBLIC_AI_API_BASE_URL,
   headers: {
-    apikey: process.env.API_KEY || process.env.NEXT_PUBLIC_API_KEY,
-  },
+    apikey: process.env.API_KEY || process.env.NEXT_PUBLIC_API_KEY
+  }
 });
-console.log("AI API Base URL:",  process.env.NEXT_PUBLIC_AI_API_BASE_URL);
+console.log("AI API Base URL:", process.env.NEXT_PUBLIC_AI_API_BASE_URL);
 // const sessionToken = sessionStorage.getItem("authDataToken");
 /* The code block is an interceptor for Axios requests. It is used to modify the request configuration
 before the request is sent. */
@@ -62,7 +62,7 @@ axiosInstanceAi.interceptors.request.use(
           encrypkey
         ).toString();
         request.data = {
-          request_data: encryptedRequest,
+          request_data: encryptedRequest
         };
       }
       return request;
@@ -85,7 +85,7 @@ axiosInstanceAi.interceptors.response.use(
     // For Itinerary Download PDF
     if (response?.data?.type === "text/html") return response;
 
-     console.log("response data",response.data.response_data)
+    console.log("response data", response.data.response_data);
 
     if (response.data.response_data) {
       const encrypkey =

@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import InitialHomepage from "./initialHomePage";
 import SearchLoader from "./searchLoader";
 import SpeechRecognition, {
-  useSpeechRecognition,
+  useSpeechRecognition
 } from "react-speech-recognition";
 import axiosInstanceAi from "@/utils/axiosInstanceForAi";
 const HomePage = () => {
@@ -25,13 +25,13 @@ const HomePage = () => {
           if (pos?.coords?.latitude && pos?.coords?.longitude) {
             handleLocation({
               lat: pos.coords.latitude,
-              lng: pos.coords.longitude,
+              lng: pos.coords.longitude
             });
           } else {
             getLocation();
           }
         },
-        () => getLocation(),
+        () => getLocation()
       );
     } else {
       getLocation();
@@ -45,7 +45,7 @@ const HomePage = () => {
         resetTranscript();
         const payload = {
           query: queryValue,
-          location: { latitude: coordsVal?.lat, longitude: coordsVal?.lng },
+          location: { latitude: coordsVal?.lat, longitude: coordsVal?.lng }
         };
         console.log("Search payload:", payload);
         const response = await axiosInstanceAi.post("/process-query", payload);
@@ -63,7 +63,7 @@ const HomePage = () => {
         setSearchLoader(false);
       }
     },
-    [resetTranscript],
+    [resetTranscript]
   );
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const HomePage = () => {
   const getLocation = async () => {
     try {
       const res = await fetch(
-        "https://pro.ip-api.com/json/?key=OviSLFVZm5We5p7",
+        "https://pro.ip-api.com/json/?key=OviSLFVZm5We5p7"
       );
       const data = await res.json();
       console.log("IP Location data:", data);
