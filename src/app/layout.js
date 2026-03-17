@@ -4,7 +4,8 @@ import Header from "@/components/header/page";
 import SessionUID from "@/components/SessionUID";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
 import LoginGate from "@/components/home/LoginGate";
-
+import { Provider } from "./context";
+import LayoutClient from "./layoutClient";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -34,23 +35,17 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable}`}
         suppressHydrationWarning
       >
+        <Provider>
         <ReactQueryProvider>
-          {/* <Provider> */}
           <SessionUID />
-
-          <div
-            className="relative pb-[50px] lg:pb-[70px] w-full text-white bg-cover bg-center main-pre-pre-lnch-start"
-            style={{ backgroundImage: "url(/images/banner-img.png)" }}
-          >
+          <LayoutClient>
             <LoginGate>
-              {/* <Header /> */}
-
+              <Header />
               {children}
-            
             </LoginGate>
-          </div>
-          {/* </Provider> */}
+            </LayoutClient>
         </ReactQueryProvider>
+        </Provider>
         {/* <Footer /> */}
       </body>
     </html>

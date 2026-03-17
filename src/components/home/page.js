@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useContext } from "react";
 import InitialHomepage from "./initialHomePage";
 import SearchLoader from "./searchLoader";
 import SpeechRecognition, {
@@ -7,7 +7,9 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import axiosInstanceAi from "@/utils/axiosInstanceForAi";
 import Header from "../header/page";
+import { Context } from "@/app/context";
 const HomePage = () => {
+  const { dispatch } = useContext(Context);
   const [searchLoader, setSearchLoader] = useState(false);
   const [resultPageShow, setResultPageShow] = useState(false);
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
@@ -42,6 +44,7 @@ const HomePage = () => {
   const searchHandler = useCallback(
     async (queryValue, coordsVal) => {
       try {
+        dispatch({ type: "SEARCH_LOADER", payload: true });
         setSearchLoader(true);
         resetTranscript();
         const payload = {
@@ -53,6 +56,7 @@ const HomePage = () => {
         if (response?.status) {
           setResultPageShow(true);
           console.log("Searching for:", response);
+          dispatch({ type: "SEARCH_LOADER", payload: false });
           setSearchLoader(false);
           setAnswerData(response?.data?.answer || null);
           console.log("Searching for Cities Data:", response?.data?.cities);
@@ -61,6 +65,7 @@ const HomePage = () => {
       } catch (err) {
         console.error("Search error:", err);
       } finally {
+        dispatch({ type: "SEARCH_LOADER", payload: false });
         setSearchLoader(false);
       }
     },
@@ -109,9 +114,7 @@ const HomePage = () => {
         <SearchLoader />
       ) : (
         <>
-          <Header />
           <InitialHomepage
-            setSearchLoader={setSearchLoader}
             resultPageShow={resultPageShow}
             resetTranscript={resetTranscript}
             transcript={transcript}

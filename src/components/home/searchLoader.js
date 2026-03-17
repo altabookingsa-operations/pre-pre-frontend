@@ -2,10 +2,10 @@ const SearchLoader = () => {
   return (
     <section
       className="relative pb-[50px] lg:pb-[70px] w-full min-h-[1000px] text-white bg-cover bg-center main-pre-pre-lnch-start"
-      style={{ backgroundImage: "url(images/launch-analyze-banner.png)" }}
+      // style={{ backgroundImage: "url(images/launch-analyze-banner.png)" }}
     >
       {/* NAVBAR */}
-      <div className="relative z-21 flex items-center justify-between lg:px-16 lg:py-6">
+      {/* <div className="relative z-21 flex items-center justify-between lg:px-16 lg:py-6">
         <div className="flex items-center gap-3">
           <img src="/images/logo.png" className="w-[230px] main-logo" alt="" />
         </div>
@@ -47,7 +47,7 @@ const SearchLoader = () => {
             </ul>
           </nav>
         </header>
-      </div>
+      </div> */}
       <div
         className="bg-center bg-cover absolute top-[46%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[350px] h-[350px] p-[70px_20px_20px] text-[#fff] text-center text-[#fff]"
         style={{ backgroundImage: "url(images/globe-middle.png)" }}
