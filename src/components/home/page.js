@@ -6,6 +6,7 @@ import SpeechRecognition, {
   useSpeechRecognition
 } from "react-speech-recognition";
 import axiosInstanceAi from "@/utils/axiosInstanceForAi";
+import Header from "../header/page";
 const HomePage = () => {
   const [searchLoader, setSearchLoader] = useState(false);
   const [resultPageShow, setResultPageShow] = useState(false);
@@ -107,20 +108,23 @@ const HomePage = () => {
       {searchLoader ? (
         <SearchLoader />
       ) : (
-        <InitialHomepage
-          setSearchLoader={setSearchLoader}
-          resultPageShow={resultPageShow}
-          resetTranscript={resetTranscript}
-          transcript={transcript}
-          handleSearchRef={handleSearchRef}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          coords={coords}
-          citiesData={citiesData}
-          answerData={answerData}
-          startListening={startListening}
-          searchHandler={searchHandler}
-        />
+        <>
+          <Header />
+          <InitialHomepage
+            setSearchLoader={setSearchLoader}
+            resultPageShow={resultPageShow}
+            resetTranscript={resetTranscript}
+            transcript={transcript}
+            handleSearchRef={handleSearchRef}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            coords={coords}
+            citiesData={citiesData}
+            answerData={answerData}
+            startListening={startListening}
+            searchHandler={searchHandler}
+          />
+        </>
       )}
     </>
   );

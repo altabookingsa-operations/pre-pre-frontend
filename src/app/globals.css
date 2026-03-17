@@ -143,4 +143,36 @@ nav ul {
   .main-pre-pre-lnch-start {
     padding-top: 20px !important;
   }
+  .main_src_citylist .city_listmnbx{
+    width: 48%!important;
+  }
+  .pplnch_anz_boxes1{
+    top: auto!important;
+    bottom: 30px;
+  }
+   .pplnch_anz_boxes2{
+    top: auto!important;
+    bottom: 30px;
+  }
 }
+ 
+.pre_lnch_ang_img{
+ box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 6px #292736bd, 0 0 8px #292736bd, 0 0 10px #292736bd, 0 0 12px #292736bd, 0 0 14px #292736bd;
+ animation: glow 1s infinite alternate;
+}
+
+@media (max-width: 990px){
+   .pplnch_anz_boxes1{
+    top: auto!important;
+    bottom: 30px;
+  }
+   .pplnch_anz_boxes2{
+    top: auto!important;
+    bottom: 30px;
+  }
+}
+@keyframes glow {
+    to {
+     box-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 16px #637ff9c2, 0 0 20px #637ff9c2, 0 0 24px #637ff9c2, 0 0 28px #637ff9c2, 0 0 32px #637ff9c2;
+    }
+  }

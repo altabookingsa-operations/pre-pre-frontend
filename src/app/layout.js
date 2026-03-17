@@ -43,46 +43,10 @@ export default function RootLayout({ children }) {
             style={{ backgroundImage: "url(/images/banner-img.png)" }}
           >
             <LoginGate>
-              <Header />
+              {/* <Header /> */}
 
               {children}
-              {/* jQuery & plugins */}
-
-              {/* <Script
-                src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-                strategy="beforeInteractive"
-              /> */}
-
-              {/* Navbar Script */}
-              {/* <Script id="navbar-script" strategy="afterInteractive">
-                {`
-              window.addEventListener("load", function () {
-
-                (function($) {
-
-                  $('#navbar-toggle').click(function() {
-                    $('nav ul').slideToggle();
-                  });
-
-                  $('#navbar-toggle').on('click', function() {
-                    this.classList.toggle('active');
-                  });
-
-                  $('nav ul li a:not(:only-child)').click(function(e) {
-                    $(this).siblings('.navbar-dropdown').slideToggle("slow");
-                    $('.navbar-dropdown').not($(this).siblings()).hide("slow");
-                    e.stopPropagation();
-                  });
-
-                  $('html').click(function() {
-                    $('.navbar-dropdown').hide();
-                  });
-
-                })(jQuery);
-
-              });
-              `}npm install sweetalert2@11.26.18
-              </Script> */}
+            
             </LoginGate>
           </div>
           {/* </Provider> */}

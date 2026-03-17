@@ -7,7 +7,7 @@ const USERNAME = process.env.NEXT_PUBLIC_LOGIN_USERNAME || "";
 const PASSWORD = process.env.NEXT_PUBLIC_LOGIN_PASSWORD || "";
 
 export default function LoginGate({ children }) {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(null);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
