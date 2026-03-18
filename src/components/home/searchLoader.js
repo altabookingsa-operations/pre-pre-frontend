@@ -1,8 +1,8 @@
 const SearchLoader = () => {
   return (
     <section
-      className="relative pb-[50px] lg:pb-[70px] w-full min-h-[1000px] text-white bg-cover bg-center main-pre-pre-lnch-start"
-      // style={{ backgroundImage: "url(images/launch-analyze-banner.png)" }}
+      className="relative pb-[50px] lg:pb-[70px] w-full min-h-[850px] lg:min-h-[790px] text-white bg-cover bg-center main-pre-pre-lnch-start"
+       //style={{ backgroundImage: "url(images/launch-analyze-banner.png)" }}
     >
       {/* NAVBAR */}
       {/* <div className="relative z-21 flex items-center justify-between lg:px-16 lg:py-6">

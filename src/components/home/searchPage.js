@@ -35,7 +35,7 @@ const SearchPage = () => {
       </div>
 
       <div className="flex justify-center gap-2 flex-wrap">
-        <div className="w-[320px] h-[300px] relative mb-[-30px] lg:mb-[0]">
+        <div className="w-[320px] h-[300px] relative lg:mb-[0]">
           <img
             src="/images/access-work-img1.png"
             className="w-full h-full rounded-[50%] object-contain"
@@ -46,7 +46,7 @@ const SearchPage = () => {
           />
         </div>
 
-        <div className="w-[320px] h-[300px] relative mb-[-30px] lg:mb-[0]">
+        <div className="w-[320px] h-[300px] relative  lg:mb-[0]">
           <img
             src="/images/access-work-img2.png"
             className="w-full h-full rounded-[50%] object-contain"
