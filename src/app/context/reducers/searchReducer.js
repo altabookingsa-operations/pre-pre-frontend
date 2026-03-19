@@ -10,3 +10,14 @@ export function searchReducer(state, action){
             return state;
     }
 }
+export function backgroundReducer(state, action){
+    switch(action.type){
+        case "BACKGROUND_SHOW": 
+        return {
+            ...state,
+            backgroundShow: action.payload,
+        };
+        default:
+            return state;
+    }
+}

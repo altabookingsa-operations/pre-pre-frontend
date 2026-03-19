@@ -1,4 +1,6 @@
+import { useRouter } from "next/navigation";
 const SearchPageResult = ({ citiesData, answerData }) => {
+  const router = useRouter();
   return (
     <>
       <div className="flex flex-col items-center text-center px-4 lg:px-6 mt-5 lg:mt-[40px]">
@@ -17,7 +19,8 @@ const SearchPageResult = ({ citiesData, answerData }) => {
             {answerData}
           </p>
         </div>
-        <div className="flex justify-center gap-4 flex-wrap w-full mt-[30px] main_src_citylist">
+      </div>
+      <div className="flex justify-center gap-4 flex-wrap w-full mt-[30px] main_src_citylist">
           {citiesData?.length > 0 &&
             citiesData
               ?.filter(
@@ -89,7 +92,7 @@ const SearchPageResult = ({ citiesData, answerData }) => {
                           </div>
                         ))}
                     </div>
-                    <button className="p-[10px] border border-[#1190A2] bg-gradient-to-r from-[#1D2E4A] to-[#041029] rounded-[13px] font-medium text-[15px] flex items-center gap-3">
+                    <button className="p-[10px] border border-[#1190A2] bg-gradient-to-r from-[#1D2E4A] to-[#041029] rounded-[13px] font-medium text-[15px] flex items-center gap-3" style={{cursor:"pointer"}} onClick={()=>{router.push("/boarding-pass");}}>
                       <img src="/images/tick.png" alt="" /> Claim Your Boarding
                       Pass
                     </button>
@@ -97,7 +100,6 @@ const SearchPageResult = ({ citiesData, answerData }) => {
                 </div>
               ))}
         </div>
-      </div>
     </>
   );
 };

@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
 const Header = () => {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -12,7 +13,7 @@ const Header = () => {
 
       <div className="relative z-[21] flex items-center justify-between lg:px-16 lg:py-6" >
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
             src="/images/logo.png"
             width={230}
@@ -53,16 +54,18 @@ const Header = () => {
             </li>
 
             <li>
-              <Link
-                href="#"
+              <button
+              // <Link
+               onClick={()=>{router.push("/boarding-pass");}}
                 className="hover:text-white bg-center bg-contain font-semibold get_brdng_btn"
                 style={{
                   backgroundImage: "url(/images/menu-active-btn-back.png)",
-                  padding: "15px 30px 23px"
+                  padding: "15px 30px 23px",
+                  cursor:"pointer"
                 }}
               >
                 Get Boarding Pass
-              </Link>
+              </button>
             </li>
 
             <li>

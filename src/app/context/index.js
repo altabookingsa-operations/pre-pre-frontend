@@ -4,6 +4,7 @@ import { searchReducer } from "./reducers/searchReducer.js";
 // initial state
 const initialState = {
     searchLoader: false,
+    backgroundShow:true
 };
 
 // create context

@@ -1,11 +1,13 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import Header from "@/components/header/page";
 import SessionUID from "@/components/SessionUID";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
 import LoginGate from "@/components/home/LoginGate";
 import { Provider } from "./context";
 import LayoutClient from "./layoutClient";
+import AuthPage from "@/components/auth/page";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -38,12 +40,14 @@ export default function RootLayout({ children }) {
         <Provider>
         <ReactQueryProvider>
           <SessionUID />
-          <LayoutClient>
+              {/* <AuthPage> */}
+                <LayoutClient>
             <LoginGate>
               <Header />
               {children}
             </LoginGate>
             </LayoutClient>
+            {/* </AuthPage> */}
         </ReactQueryProvider>
         </Provider>
         {/* <Footer /> */}

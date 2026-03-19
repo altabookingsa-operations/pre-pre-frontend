@@ -36,12 +36,11 @@ nav ul {
   height: 55px;
   width: 70px;
 }
-.tag-flex-bx .relative{
+.tag-flex-bx .relative {
   margin-left: 20px;
-
 }
-.tag-flex-bx .relative:first-child{
-    margin-left: 0px;
+.tag-flex-bx .relative:first-child {
+  margin-left: 0px;
   padding-left: 0px;
 }
 
@@ -102,10 +101,9 @@ nav ul {
     left: 0;
     right: 0;
     margin: 0 auto;
-       transform: rotate(90deg);
-       pointer-events: none;
+    transform: rotate(90deg);
+    pointer-events: none;
   }
-
 }
 #navbar-toggle {
   position: absolute;
@@ -162,36 +160,107 @@ nav ul {
   .main-pre-pre-lnch-start {
     padding-top: 20px !important;
   }
-  .main_src_citylist .city_listmnbx{
-    width: 48%!important;
+  .main_src_citylist .city_listmnbx {
+    width: 48% !important;
   }
-  .pplnch_anz_boxes1{
-    top: auto!important;
+  .pplnch_anz_boxes1 {
+    top: auto !important;
     bottom: 30px;
   }
-   .pplnch_anz_boxes2{
-    top: auto!important;
+  .pplnch_anz_boxes2 {
+    top: auto !important;
     bottom: 30px;
   }
-}
- 
-.pre_lnch_ang_img{
- box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 6px #292736bd, 0 0 8px #292736bd, 0 0 10px #292736bd, 0 0 12px #292736bd, 0 0 14px #292736bd;
- animation: glow 1s infinite alternate;
 }
 
-@media (max-width: 990px){
-   .pplnch_anz_boxes1{
-    top: auto!important;
+.pre_lnch_ang_img {
+  box-shadow:
+    0 0 1px #fff,
+    0 0 2px #fff,
+    0 0 6px #292736bd,
+    0 0 8px #292736bd,
+    0 0 10px #292736bd,
+    0 0 12px #292736bd,
+    0 0 14px #292736bd;
+  animation: glow 1s infinite alternate;
+}
+
+@media (max-width: 990px) {
+  .pplnch_anz_boxes1 {
+    top: auto !important;
     bottom: -55px;
   }
-   .pplnch_anz_boxes2{
-    top: auto!important;
+  .pplnch_anz_boxes2 {
+    top: auto !important;
     bottom: -55px;
   }
 }
 @keyframes glow {
-    to {
-     box-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 16px #637ff9c2, 0 0 20px #637ff9c2, 0 0 24px #637ff9c2, 0 0 28px #637ff9c2, 0 0 32px #637ff9c2;
-    }
+  to {
+    box-shadow:
+      0 0 4px #fff,
+      0 0 8px #fff,
+      0 0 16px #637ff9c2,
+      0 0 20px #637ff9c2,
+      0 0 24px #637ff9c2,
+      0 0 28px #637ff9c2,
+      0 0 32px #637ff9c2;
   }
+}
+
+.ReactModalPortal {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+@media (min-width: 900px) {
+  .partner-verfy-number-section {
+    min-width: 750px;
+  }
+}
+
+.ReactModal__Overlay {
+  background-color: #000000ad !important;
+}
+
+.partner-verfy-number-middle {
+  background: #d4f1ff;
+  color: #000;
+  padding: 30px;
+  text-align: center;
+}
+
+.partner-verfy-number-form input {
+  margin: 0px 10px;
+  width: 70px;
+  height: 60px;
+  margin-bottom: 5px;
+}
+.prtnr-verify-new-btn {
+  cursor: pointer;
+}
+.partner-verfy-number-section {
+  position: relative;
+}
+.prtnr-vrfy-close-btn {
+  position: absolute;
+  top: 25px;
+  right: 20px;
+}
+.prtnr-vrfy-close-btn img {
+  filter: invert(100%);
+  width: 20px;
+  cursor: pointer;
+}
+
+@media (max-width: 470px) {
+  .partner-verfy-number-form input {
+    width: 50px;
+    height: 50px;
+    margin: 0 4px 5px;
+  }
+  .partner-verfy-number-form input:last-child {
+    margin: 0 0 5px;
+  }
+}
