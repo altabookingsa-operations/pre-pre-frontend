@@ -1,20 +1,45 @@
 'use client';
-import { useContext, useState } from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { useContext, useEffect, useState } from 'react';
+import { Formik, Field, Form, ErrorMessage, setIn } from 'formik';
 import * as Yup from 'yup';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Context } from '@/app/context';
 import VerifyNumberModal from './otpPopup';
-const RegistrationPage = ({  }) => {
+import { useGetCityName } from '@/app/hooks/useRegistration';
+import Select from "react-select";
+import CheckInStatus from './boarding/checkInStatus';
+import CitySelect from './common/CitySelect';
+const RegistrationPage = ({ }) => {
   const { dispatch } = useContext(Context);
   const [type, setType] = useState('register');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: 'Mr.',
+    firstName: '',
+    lastName: '',
+    homeCity: null,
+  });
+  const [inputValue, setInputValue] = useState('');
   const today = new Date();
   const maxSelectableDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+  // 👉 your API hook
+  const { data: cityData = [], isLoading } = useGetCityName(inputValue, {
+    enabled: inputValue.length >= 3, // 👈 only call after 3 letters
+  });
+
+  // 👉 map API response
+  const options = cityData.map((item) => ({
+    label: `${item.cityname} (${item.countryname})`,
+    value: item.id,
+    fullData: item, // optional if you need full object
+  }));
+
   if (type === 'otp') {
     return <VerifyNumberModal setType={setType} />;
   }
-
+  console.log("inputValue", inputValue);
   return (
     <>
       <Formik
@@ -25,7 +50,7 @@ const RegistrationPage = ({  }) => {
           email: '',
           password: '',
           confirmPassword: '',
-          policyCheck: false,
+          homeCity:null,
           mobile_number: '',
           nationality: '',
           dateOfBirth: '',
@@ -56,6 +81,7 @@ const RegistrationPage = ({  }) => {
             )
             .required('Confirm Password is required'),
           nationality: Yup.string().required('Please select Nationality'),
+          homeCity : Yup.string().required('Please select Home City'),
           dateOfBirth: Yup.string()
             .required('Please select Date of Birth')
             .test('age', 'You must be at least 18 years old', function (value) {
@@ -70,7 +96,6 @@ const RegistrationPage = ({  }) => {
               }
               return age >= 18;
             }),
-          policyCheck: Yup.bool().oneOf([true], 'Accept Terms & Conditions is required'),
         })}
         onSubmit={(values, { resetForm, setSubmitting }) => { }}
       >
@@ -177,15 +202,41 @@ const RegistrationPage = ({  }) => {
                       </div>
                       <div className="w-full">
                         <label className="text-[16px] font-regular mb-2 block">Home City*</label>
-                        <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                        {/* <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" /> */}
+                        <CitySelect
+                            inputValue={inputValue}
+                            cityData={cityData}
+                            formData={formData}
+                            setInputValue={setInputValue}
+                            setFormData={setFormData}
+                            setMenuOpen={setMenuOpen}
+                            menuOpen={menuOpen}
+                            isLoading={isLoading}
+                        />
                       </div>
                       <div className="w-full">
                         <label className="text-[16px] font-regular mb-2 block">First Name*</label>
-                        <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                        <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
+                          onChange={(e) => {
+                            if (e?.target?.value.length) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                firstName: e?.target?.value
+                              }));
+                            }
+                          }} />
                       </div>
                       <div className="w-full">
                         <label className="text-[16px] font-regular mb-2 block">Last Name*</label>
-                        <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                        <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
+                          onChange={(e) => {
+                            if (e?.target?.value.length) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                lastName: e?.target?.value
+                              }));
+                            }
+                          }} />
                       </div>
                       <div className="w-full">
                         <label className="text-[16px] font-regular mb-2 block">Phone Number*</label>
@@ -200,6 +251,7 @@ const RegistrationPage = ({  }) => {
                         <select className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]">
                           <option>Nationality</option>
                         </select>
+
                       </div>
                       <div className="w-full">
                         <label className="text-[16px] font-regular mb-2 block text-[#fff]">Date of Birth*</label>
@@ -228,11 +280,6 @@ const RegistrationPage = ({  }) => {
                             type="password"
                             className="w-full outline-none focus:outline-none focus:ring-0 border-none focus:border-none"
                           />
-                          <i
-                            className={
-                              true ? 'fa-solid fa-eye mt-1' : 'fa-sharp fa-solid fa-eye-slash mt-1'
-                            }
-                          ></i>
                         </div>
                         {/* <input type="password" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" /> */}
                       </div>
@@ -246,16 +293,11 @@ const RegistrationPage = ({  }) => {
                             type="password"
                             className="w-full outline-none focus:outline-none focus:ring-0 border-none focus:border-none"
                           />
-                          <i
-                            className={
-                              true ? 'fa-solid fa-eye mt-1' : 'fa-sharp fa-solid fa-eye-slash mt-1'
-                            }
-                          ></i>
                         </div>
                       </div>
                       <button className="col-span-2 bg-[#01BDD6] hover:bg-cyan-400 text-[#fff] text-[18px] font-semibold py-3 mt-[10px] rounded-xl w-full"
-                        //onClick={() => { dispatch({ type: "BACKGROUND_SHOW", payload: false }); setType('otp'); }}
-                        >
+                      //onClick={() => { dispatch({ type: "BACKGROUND_SHOW", payload: false }); setType('otp'); }}
+                      >
                         Complete Check-In
                       </button>
                     </div>
@@ -264,7 +306,7 @@ const RegistrationPage = ({  }) => {
                     after:mx-auto after:w-[80%] after:h-[1px]
                     after:bg-[linear-gradient(to_right,#fff0,#00CEFF,#fff0)]">
                       Already have an account ? <span className="italic font-bold"
-                        //onClick={() => setType('login')}
+                      //onClick={() => setType('login')}
                       >
                         Login
                       </span>
@@ -282,82 +324,7 @@ const RegistrationPage = ({  }) => {
                     </div>
                   </div>
                 </div>
-                <div className="lg:w-[30%] mt-[20px] lg:mt-0 rounded-[20px] bg-[#0000002e] border border-[#368BFA] lg:border-l-0" style={{ backdropFilter: 'blur(8px)' }}>
-                  <div className="p-[10px_20px] flex justify-between" style={{ backgroundImage: 'linear-gradient(to right, #00e4f3 ,#00a2e5,#00d3f0)', borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
-                    <img src="/images/alta-white-logo.png" className="w-[200px] object-contain" alt="" />
-                  </div>
-                  <div className="p-[15px_20px]">
-                    <div className="min-h-[94px] bg-center bg-cover p-[10px]" style={{ backgroundImage: 'url(images/erly_arr_back.png)' }}>
-                      <h5 className="rounded-[44px] p-[5px_10px] bg-[#EAFCFF] text-[#131313] text-[14px] font-regular table mb-[5px]">CHECK-IN STATUS</h5>
-                      <h4 className="font-semibold text-[20px]">Early Arrived</h4>
-                    </div>
-                    <div className="mt-[30px] relative pb-[15px] mb-[15px]">
-                      <h4 className="uppercase text-[#01DEFF] font-semibold pb-[5px] text-[14px]">PASSENGER NAME</h4>
-                      <p className="uppercase text-[#fff] font-semibold pb-[5px] text-[16px] lg:tracking-[8px]">nada de turckheim</p>
-                      <div style={{ position: 'absolute', bottom: 0, width: '100%', height: 1, margin: '0 auto', left: 0, backgroundImage: 'linear-gradient(to right, #fff0, #00CEFF, #fff0)', content: '" "' }} />
-                    </div>
-                    <div className="relative pb-[15px] mb-[15px]">
-                      <table className="w-full">
-                        <tbody><tr>
-                          <td className="uppercase text-[#01DEFF] font-semibold pb-[5px] text-[14px]">booking REF</td>
-                          <td className="text-[16px] font-semibold">h179lp</td>
-                        </tr>
-                        </tbody></table>
-                      <div style={{ position: 'absolute', bottom: 0, width: '100%', height: 1, margin: '0 auto', left: 0, backgroundImage: 'linear-gradient(to right, #fff0, #00CEFF, #fff0)', content: '" "' }} />
-                    </div>
-                    <div className="relative pl-[50px] pb-[15px] mb-[15px]">
-                      <img src="/images/lin-2.png" className="absolute left-[20px] top-[5px]" alt="" />
-                      <div className="absolute top-[45px] left-[10px] w-[25px] h-[25px] bg-[#2DA3BF] rounded-[50%] flex items-center justify-center"><img src="/images/plane3.png" className="w-[15px]" alt="" /></div>
-                      <div className="pb-[30px]">
-                        <h5 className="font-regular pb-[5px] text-[14px]">From</h5>
-                        <h4 className="font-semibold text-[16px]">London (LHR)</h4>
-                      </div>
-                      <div>
-                        <h5 className="font-regular pb-[5px] text-[14px]">To</h5>
-                        <h4 className="font-semibold text-[16px]">Alta Booking Early Access(ABE)</h4>
-                      </div>
-                      <div style={{ position: 'absolute', bottom: 0, width: '100%', height: 1, margin: '0 auto', left: 0, backgroundImage: 'linear-gradient(to right, #fff0, #00CEFF, #fff0)', content: '" "' }} />
-                    </div>
-                    <div className="relative pb-[15px] mb-[15px]">
-                      <table className="w-full">
-                        <tbody><tr>
-                          <td className="uppercase font-regular pb-[5px] text-[14px]">Flight <span className="font-semibold ml-[5px]">AB2026</span></td>
-                          <td className="uppercase font-regular pb-[5px] text-[14px]">gate <span className="font-semibold ml-[5px]">A1</span></td>
-                        </tr>
-                          <tr>
-                            <td className="uppercase font-regular pb-[5px] text-[14px]">cabin <span className="font-semibold ml-[5px]">FOUNDERS CLASS</span></td>
-                            <td className="uppercase font-regular pb-[5px] text-[14px]">seat <span className="font-semibold ml-[5px]">1A</span></td>
-                          </tr>
-                        </tbody></table>
-                      <div style={{ position: 'absolute', bottom: 0, width: '100%', height: 1, margin: '0 auto', left: 0, backgroundImage: 'linear-gradient(to right, #fff0, #00CEFF, #fff0)', content: '" "' }} />
-                    </div>
-                    <div className="relative pb-[15px] mb-[15px]">
-                      <table className="w-full">
-                        <tbody><tr>
-                          <td className="uppercase text-[#01DEFF] font-semibold pb-[5px] text-[14px]">bOARDING GROUP 1</td>
-                          <td className="text-[16px] font-semibold">56701</td>
-                        </tr>
-                        </tbody></table>
-                      <div style={{ position: 'absolute', bottom: 0, width: '100%', height: 1, margin: '0 auto', left: 0, backgroundImage: 'linear-gradient(to right, #fff0, #00CEFF, #fff0)', content: '" "' }} />
-                    </div>
-                    <div className="relative pb-[15px] mb-[15px]">
-                      <table className="w-full">
-                        <tbody><tr>
-                          <td className="uppercase text-[#01DEFF] font-semibold pb-[5px] text-[14px]">Arrival time</td>
-                          <td className="text-[16px] font-semibold">5 hrs Before Departure</td>
-                        </tr>
-                        </tbody></table>
-                    </div>
-                    <div className="p-[15px_30px] bg-center bg-cover m-[-20px] mt-[20px]" style={{ backgroundImage: 'url(images/white-qr-back.png)', borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}>
-                      <div className="flex items-center justify-center gap-[20px] text-[#0097AD] mb-[15px]">
-                        <p className="text-[15px] font-regular">TICKET ID</p>
-                        <p className="text-[16px] font-semibold">AB-47291853</p>
-                      </div>
-                      <img src="/images/qr.png" alt="" />
-                      <p className="text-center text-[#000] mt-[10px] font-medium relative"><img src="/images/line-nw-2.png" className="absolute top-[12px] left-[-20px] w-[20%]" alt="" /> Gate closes at takeoff <img src="/images/line-nw-3.png" className="absolute top-[12px] right-[-20px] w-[20%]" alt="" /></p>
-                    </div>
-                  </div>
-                </div>
+                <CheckInStatus formData={formData} />
               </div>
             </section>
           </Form>
