@@ -101,7 +101,7 @@ const CitySelect = ({
             }}
             isLoading={isLoading}
             menuIsOpen={menuOpen}
-            placeholder="Type at least 3 letters..."
+            placeholder=""
             noOptionsMessage={() =>
                 inputValue.length < 3
                     ? "Type at least 3 characters"

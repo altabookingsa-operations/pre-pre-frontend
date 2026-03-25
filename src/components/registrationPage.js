@@ -7,7 +7,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Context } from '@/app/context';
 import VerifyNumberModal from './otpPopup';
 import { useGetCityName } from '@/app/hooks/useRegistration';
-import Select from "react-select";
 import CheckInStatus from './boarding/checkInStatus';
 import CitySelect from './common/CitySelect';
 const RegistrationPage = ({ }) => {
