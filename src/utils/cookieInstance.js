@@ -40,6 +40,7 @@ const cookieInstance = (() => {
     cookieInstance.getStorageObj = function (key) {
       const encrypkey = process.env.ENCRYPTION_KEY || process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
       const cookieValue = Cookies.get(key);
+      console.log("cookieValue", cookieValue)
       if (cookieValue) {
         try {
           const bytes = CryptoJS.AES.decrypt(cookieValue, encrypkey);

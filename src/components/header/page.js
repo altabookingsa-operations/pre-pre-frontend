@@ -4,10 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import cookieInstance from "@/utils/cookieInstance";
 const Header = () => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const user = cookieInstance.getStorageObj("authDataTokenNode");
   return (
     <header>
 
@@ -37,9 +38,8 @@ const Header = () => {
         {/* Navigation */}
         <nav>
           <ul
-            className={`nav-list items-center gap-8 text-[#fff] menu-new text-[18px] ${
-              menuOpen ? "!block" : "!hidden"
-            } lg:!flex`}
+            className={`nav-list items-center gap-8 text-[#fff] menu-new text-[18px] ${menuOpen ? "!block" : "!hidden"
+              } lg:!flex`}
           >
             <li>
               <Link href="#" className="hover:text-white">
@@ -55,24 +55,26 @@ const Header = () => {
 
             <li>
               <button
-              // <Link
-               onClick={()=>{router.push("/boarding-pass");}}
+                // <Link
+                onClick={() => { router.push("/boarding-pass"); }}
                 className="hover:text-white bg-center bg-contain font-semibold get_brdng_btn"
                 style={{
                   backgroundImage: "url(/images/menu-active-btn-back.png)",
                   padding: "15px 30px 23px",
-                  cursor:"pointer"
+                  cursor: "pointer"
                 }}
               >
                 Get Boarding Pass
               </button>
             </li>
+            {!user && (
+              <li>
+                <Link href="/login" className="hover:text-white">
+                  Login
+                </Link>
+              </li>
+            )}
 
-            <li>
-              <Link href="#" className="hover:text-white">
-                Login
-              </Link>
-            </li>
           </ul>
         </nav>
       </div>
