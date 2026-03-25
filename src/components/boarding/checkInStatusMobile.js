@@ -31,7 +31,7 @@ const CheckInStatusMobile = ({formData}) => {
                 <h5 className="font-regular pb-[5px] text-[14px]">From</h5>
                 <h4 className="font-semibold text-[16px]">{formData?.homeCity?.cityname ? `${formData?.homeCity?.cityname} (${formData?.homeCity?.iata})` : ''}</h4>
               </div>
-              <div className>
+              <div>
                 <h5 className="font-regular pb-[5px] text-[14px]">To</h5>
                 <h4 className="font-semibold text-[16px]">Alta Booking Early Access(ABE)</h4>
               </div>

@@ -42,10 +42,10 @@ export default function RootLayout({ children }) {
           <SessionUID />
               {/* <AuthPage> */}
                 <LayoutClient>
-            <LoginGate>
+            {/* <LoginGate> */}
               <Header />
               {children}
-            </LoginGate>
+            {/* </LoginGate> */}
             </LayoutClient>
             {/* </AuthPage> */}
         </ReactQueryProvider>
