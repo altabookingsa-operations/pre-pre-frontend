@@ -2,7 +2,6 @@
 import { useLogin } from '@/app/hooks/useLogin';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import cookieInstance from '@/utils/cookieInstance';
 const LoginPage = () => {
   const { mutate: login, isPending: loginLoading } =
     useLogin({

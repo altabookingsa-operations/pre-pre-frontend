@@ -1,8 +1,17 @@
 'use client';
+import { useLogin } from '@/app/hooks/useLogin';
 import { Formik, Field, Form, ErrorMessage, setIn } from 'formik';
 import * as Yup from 'yup';
 const LoginPageMobile = () => {
-
+  const { mutate: login, isPending: loginLoading } =
+    useLogin({
+      onSuccess: (res) => {
+        
+      },
+      onError: (error) => {
+        console.log("error occured", error);
+      },
+    });
   return (
     <Formik
       initialValues={{
@@ -21,7 +30,18 @@ const LoginPageMobile = () => {
           )
           .required('Password is required'),
       })}
-      onSubmit={(values, { resetForm, setSubmitting }) => { }}
+      onSubmit={(values, { resetForm, setSubmitting }) => {
+        let loginPayload = {
+          email: values.email.toLowerCase(),
+          password: values.password,
+        }
+        console.log("loginPayload", loginPayload)
+        //ankush.banerjee@pixelconsultancy.in
+        //Ankush@9748
+        login(loginPayload);
+        resetForm();
+
+      }}
     >
       {({
         values,
@@ -92,14 +112,33 @@ const LoginPageMobile = () => {
                   <div className="flex flex-col gap-5 lg:grid grid-cols-2 gap-3 pt-4 items-baseline">
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block">Email Address*</label>
-                      <input type="email" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                      <Field
+                        type="email"
+                        name="email"
+                        className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
+                        onClick={(e) => setFieldValue('email', e?.target?.value)} />
+                      <ErrorMessage
+                        name="email"
+                        component="div"
+                        style={{ color: "red", fontSize: 12 }}
+                      />
                     </div>
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block">Password*</label>
-                      <input type="password" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                      <Field
+                        type="password"
+                        name="password"
+                        className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
+                      onClick={(e) => setFieldValue('password', e?.target?.value)}
+                        />
+                      <ErrorMessage
+                        name="password"
+                        component="div"
+                        style={{ color: "red", fontSize: 12 }}
+                      />
                     </div>
                     <button className="col-span-2 bg-[#01BDD6] hover:bg-cyan-400 text-[#fff] text-[18px] font-semibold py-3 mt-[10px] rounded-xl w-full">
-                     Log In
+                      Log In
                     </button>
                   </div>
                   <div className="flex flex-col lg:flex-row lg:gap-[60px]">
