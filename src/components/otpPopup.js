@@ -87,7 +87,7 @@ const customStyles = {
   }
 };
  
-const VerifyNumberModal = ({setType}) => {
+const VerifyNumberModal = ({setType, requireEmailOtp = false}) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       Modal.setAppElement(document.body);
@@ -238,7 +238,7 @@ const VerifyNumberModal = ({setType}) => {
   const renderMobileModal = () => {
     return (
       <Modal
-        isOpen={false}
+        isOpen={true}
         style={customStyles}
         ariaHideApp={false} //
         contentLabel="Verify Mobile Modal"
@@ -314,8 +314,7 @@ const VerifyNumberModal = ({setType}) => {
       </Formik>
     </Modal>
   );
-  // return <>{renderMobileModal()}</>;
-  return <>{renderEmailModal()}</>;
+  return <>{requireEmailOtp ? renderEmailModal() : renderMobileModal()}</>;
 };
  
 export const MobileVerifyNumberModal = (props) => (

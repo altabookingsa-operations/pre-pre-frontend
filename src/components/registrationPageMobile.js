@@ -4,9 +4,12 @@ import { Formik, Field, Form, ErrorMessage, setIn } from 'formik';
 import * as Yup from 'yup';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import PhoneInput, { parsePhoneNumber, isPossiblePhoneNumber } from 'react-phone-number-input'; 
+import 'react-phone-number-input/style.css';
 import { Context } from '@/app/context';
 import VerifyNumberModal from './otpPopup';
-import { useGetCityName } from '@/app/hooks/useRegistration';
+import axiosFrontNodeInstance from '@/utils/axiosFrontNodeInstance';
+import { useGetCityName, useGetNationality } from '@/app/hooks/useRegistration';
 import CheckInStatus from './boarding/checkInStatus';
 import CitySelect from './common/CitySelect'
 import CheckInStatusMobile from "./boarding/checkInStatusMobile";
@@ -28,6 +31,8 @@ const RegistrationPageMobile = () => {
   const { data: cityData = [], isLoading } = useGetCityName(inputValue, {
     enabled: inputValue.length >= 3, // 👈 only call after 3 letters
   });
+
+  const { data: nationalityData = [] } = useGetNationality();
 
   // 👉 map API response
   const options = cityData.map((item) => ({
@@ -79,8 +84,13 @@ const RegistrationPageMobile = () => {
           )
           .required('Confirm Password is required'),
         nationality: Yup.string().required('Please select Nationality'),
-        homeCity: Yup.string().required('Please select Home City'),
-        dateOfBirth: Yup.string()
+        homeCity: Yup.mixed().required('Please select Home City'),
+        mobile_number: Yup.string()
+          .required('Phone Number is required')
+          .test('is-possible-phone-number', 'Invalid Phone Number', function(value) {
+            return value ? isPossiblePhoneNumber(value) : false;
+          }),
+        dateOfBirth: Yup.mixed()
           .required('Please select Date of Birth')
           .test('age', 'You must be at least 18 years old', function (value) {
             if (!value) return false;
@@ -95,7 +105,23 @@ const RegistrationPageMobile = () => {
             return age >= 18;
           }),
       })}
-      onSubmit={(values, { resetForm, setSubmitting }) => { }}
+      onSubmit={async (values, { setSubmitting }) => {
+        try {
+          const pn = parsePhoneNumber(values.mobile_number);
+          const payload = {
+            mobile_number: pn ? pn.nationalNumber : '',
+            dial_code: pn ? `+${pn.countryCallingCode}` : '',
+            email: values.email || formData.email || ''
+          };
+          await axiosFrontNodeInstance.post('/auth/send-mobile-verification-otp', payload);
+          setType('otp');
+        } catch (error) {
+          console.error("Error sending OTP", error);
+          setType('otp'); 
+        } finally {
+          setSubmitting(false);
+        }
+      }}
     >
       {({
         values,
@@ -194,51 +220,77 @@ const RegistrationPageMobile = () => {
                         menuOpen={menuOpen}
                         isLoading={isLoading}
                       />
+                      {(() => {
+                        const cityId = formData.homeCity?.value || formData.homeCity?.id || formData.homeCity;
+                        if (formData.homeCity && cityId !== values.homeCity) {
+                          setTimeout(() => setFieldValue('homeCity', cityId), 0);
+                        }
+                        return null;
+                      })()}
                     </div>
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block">First Name*</label>
-                      <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
+                      <input type="text" name="firstName" value={values.firstName} className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
                         onChange={(e) => {
-                          if (e?.target?.value.length) {
-                            setFormData((prev) => ({
-                              ...prev,
-                              firstName: e?.target?.value
-                            }));
-                          }
+                          handleChange(e);
+                          setFormData((prev) => ({
+                            ...prev,
+                            firstName: e.target.value
+                          }));
                         }} />
                     </div>
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block">Last Name*</label>
-                      <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
+                      <input type="text" name="lastName" value={values.lastName} className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
                         onChange={(e) => {
-                          if (e?.target?.value.length) {
-                            setFormData((prev) => ({
-                              ...prev,
-                              lastName: e?.target?.value
-                            }));
-                          }
+                          handleChange(e);
+                          setFormData((prev) => ({
+                            ...prev,
+                            lastName: e.target.value
+                          }));
                         }} />
                     </div>
-                    <div className="w-full">
+                    <div className="w-full [&_.PhoneInputInput]:bg-transparent [&_.PhoneInputInput]:text-white [&_.PhoneInputInput]:border-none [&_.PhoneInputInput]:outline-none [&_.PhoneInputInput]:focus:ring-0 [&_.PhoneInputInput]:ml-2 [&_.PhoneInputCountrySelect]:text-black [&_option]:text-black">
                       <label className="text-[16px] font-regular mb-2 block">Phone Number*</label>
-                      <input type="text" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                      <PhoneInput
+                        international
+                        defaultCountry="IN"
+                        placeholder="Enter phone number"
+                        value={values.mobile_number}
+                        onChange={(val) => {
+                          setFieldValue('mobile_number', val);
+                          setFormData((prev) => ({
+                            ...prev,
+                            mobile_number: val,
+                          }));
+                        }}
+                        className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
+                      />
+                      {touched.mobile_number && errors.mobile_number && (
+                         <div className="text-red-500 text-sm mt-1">{errors.mobile_number}</div>
+                      )}
                     </div>
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block">Email Address*</label>
-                      <input type="email" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                      <Field name="email" type="email" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
                     </div>
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block">Nationality*</label>
-                      <select className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]">
-                        <option>Nationality</option>
-                      </select>
+                      <Field as="select" name="nationality" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8] [&>option]:text-black">
+                        <option value="" disabled>Nationality</option>
+                        {nationalityData?.map((item, index) => (
+                          <option key={item?.id || index} value={item?.id || item?.nationality || item?.name || item}>
+                            {item?.nationality || item?.name || item?.countryname || item}
+                          </option>
+                        ))}
+                      </Field>
                     </div>
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block text-[#fff]">Date of Birth*</label>
                       {/* <input type="date" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" /> */}
                       <DatePicker
                         className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]"
-                        dateFormat="EEE dd MMM yyyy" // 👈 updated format
+                        dateFormat="EEE dd MMM yyyy"
                         showYearDropdown
                         showMonthDropdown
                         dropdownMode="select"
@@ -246,19 +298,36 @@ const RegistrationPageMobile = () => {
                         inputReadOnly={true}
                         placeholderText="dd-mm-yyyy"
                         autoComplete="off"
+                        selected={values.dateOfBirth ? new Date(values.dateOfBirth) : null}
+                        onChange={(date) => setFieldValue('dateOfBirth', date ? date.toISOString() : null)}
                       />
                     </div>
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block">Password*</label>
-                      <input type="password" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                      <input type="password" name="password" value={values.password} 
+                        onChange={handleChange}
+                        className="bg-[#00000038] border border-slate-700 text-white rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
                     </div>
                     <div className="w-full">
                       <label className="text-[16px] font-regular mb-2 block">Confirm Password*</label>
-                      <input type="password" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
+                      <input type="password" name="confirmPassword" value={values.confirmPassword}
+                        onChange={handleChange}
+                        className="bg-[#00000038] border border-slate-700 text-white rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8]" />
                     </div>
-                    <button className="col-span-2 bg-[#01BDD6] hover:bg-cyan-400 text-[#fff] text-[18px] font-semibold py-3 mt-[10px] rounded-xl w-full">
-                      Complete Check-In
-                    </button>
+                    <div className="col-span-2 mt-[10px] w-full">
+                      <button type="button" className="bg-[#01BDD6] hover:bg-cyan-400 text-[#fff] text-[18px] font-semibold py-3 rounded-xl w-full"
+                        onClick={() => {
+                          handleSubmit();
+                        }}
+                      >
+                        Complete Check-In
+                      </button>
+                      {Object.keys(errors).length > 0 && Object.keys(touched).length > 0 && (
+                        <div className="text-red-400 bg-red-900/30 p-3 mt-4 rounded-lg font-medium text-[14px]">
+                          {Object.values(errors)[0]}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <p className="text-[14px] text-center py-[15px] relative log_txt mb-[15px]">Already have an account ? <span className="italic font-bold">Login</span></p>
                   <div className="flex flex-col lg:flex-row lg:gap-[60px]">
