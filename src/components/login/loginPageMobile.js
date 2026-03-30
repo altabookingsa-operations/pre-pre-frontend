@@ -12,7 +12,8 @@ const LoginPageMobile = () => {
     useLogin({
       onSuccess: (res) => {
         dispatch({ type: "SET_USER", payload: res?.data?.profile?.token }); 
-        router.refresh();
+        // router.refresh();
+         router.push("/boarding-pass");
       },
       onError: (error) => {
         console.log("error occured", error);

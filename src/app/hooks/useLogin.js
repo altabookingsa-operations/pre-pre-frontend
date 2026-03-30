@@ -8,7 +8,7 @@ export const useLogin = (options = {}) => {
             return await axiosInstance
                 .post("/auth/login", data,)
                 .then((res) => {
-                    if (res.data.res_code !== 200) {
+                    if (res?.res_code !== 200) {
                         console.log("login error response", res);
                         throw new Error(res.response || "Login failed");
                     }
