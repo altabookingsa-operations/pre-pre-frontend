@@ -1,12 +1,18 @@
 'use client';
+import { useContext } from 'react';
 import { useLogin } from '@/app/hooks/useLogin';
-import { Formik, Field, Form, ErrorMessage, setIn } from 'formik';
+import { useRouter } from "next/navigation";
+import { Context } from '@/app/context';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 const LoginPageMobile = () => {
+   const { state, dispatch } = useContext(Context);
+  const router = useRouter();
   const { mutate: login, isPending: loginLoading } =
     useLogin({
       onSuccess: (res) => {
-        
+        dispatch({ type: "SET_USER", payload: res?.data?.profile?.token }); 
+        router.refresh();
       },
       onError: (error) => {
         console.log("error occured", error);
@@ -57,10 +63,10 @@ const LoginPageMobile = () => {
         setFieldTouched,
       }) => (
         <Form>
-          <section className="relative pb-[50px] lg:pb-[70px] w-full text-white bg-cover bg-center brding-pass-registration min-h-[1100px]" style={{ backgroundImage: 'url(images/mobile-registration-back.png)' }}>
+          <section className="relative pb-[50px] lg:pb-[70px] w-full text-white bg-cover bg-center brding-pass-registration min-h-[1100px]">
             <div className="relative z-21 justify-between lg:px-16 lg:py-6 lg:pb-0 pt-[10px] ">
             </div>
-            <div className=" border border-[#72b4d1] rounded-[22px] px-5 lg:px-12 py-5 mb-8 bg-center bg-cover table m-[0_auto] text-center mt-[20px] lg:mt-[-30px] lg:min-w-[506px]" style={{ backgroundImage: 'url(images/banner-big-text-back.png)', boxShadow: '0 4px 8px 0 rgb(0 0 0)' }}>
+            {/* <div className=" border border-[#72b4d1] rounded-[22px] px-5 lg:px-12 py-5 mb-8 bg-center bg-cover table m-[0_auto] text-center mt-[20px] lg:mt-[-30px] lg:min-w-[506px]" style={{ backgroundImage: 'url(images/banner-big-text-back.png)', boxShadow: '0 4px 8px 0 rgb(0 0 0)' }}>
               <p className="tracking-[4px] lg:tracking-[8px] text-white text-[14px] lg:text-[18px] uppercase">
                 Get Your Alta Booking
               </p>
@@ -85,7 +91,8 @@ const LoginPageMobile = () => {
                 <p>GATE <span className="font-semibold">A1</span></p>
                 <p>CHECK-IN <span className="font-semibold">OPEN</span></p>
               </div>
-            </div>
+            </div> */}
+
             {/* <div className="flex mt-[40px] lg:w-[70%] m-[0_auto] flex_main_reg_frm"> */}
             <div className="mt-[40px] w-[94%] mx-auto block md:w-[97%] lg:w-[95%] xl:w-[70%]">
               <div className="lg:w-[70%] rounded-[20px] bg-[#0000002e] border border-[#368BFA] relative lg:border-r-0" style={{ backdropFilter: 'blur(8px)', zIndex: 2, borderBottomLeftRadius: '0!important', borderBottomRightRadius: '0!important' }}>
@@ -141,7 +148,7 @@ const LoginPageMobile = () => {
                       Log In
                     </button>
                   </div>
-                  <div className="flex flex-col lg:flex-row lg:gap-[60px]">
+                  <div className="flex flex-col lg:flex-row lg:gap-[60px] mt-[20px]">
                     <div>
                       <p className="font-medium text-[16px] flex items-center gap-[5px] pb-[10px]"><img src="/images/tick2.png" className="w-[20px]" alt="" /> Early access to Alta Booking</p>
                       <p className="font-medium text-[16px] flex items-center gap-[5px] pb-[10px]"><img src="/images/tick2.png" className="w-[20px]" alt="" /> Chance to win dream trips</p>

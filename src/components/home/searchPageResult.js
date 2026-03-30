@@ -96,6 +96,7 @@ const SearchPageResult = ({ citiesData, answerData }) => {
                           </div>
                         ))}
                     </div>
+                    {}
                     <button className="p-[10px] border border-[#1190A2] bg-gradient-to-r from-[#1D2E4A] to-[#041029] rounded-[13px] font-medium text-[15px] flex items-center gap-3" style={{cursor:"pointer"}} onClick={()=>{setModalIsOpen(true);}}>
                       <img src="/images/tick.png" alt="" /> Claim Your Boarding
                       Pass
@@ -104,7 +105,7 @@ const SearchPageResult = ({ citiesData, answerData }) => {
                 </div>
               ))}
         </div>
-      <BoardingPassModal isOpen={modalIsOpen}/>
+      <BoardingPassModal isOpen={modalIsOpen} setModalIsOpen={setModalIsOpen}/>
     </>
   );
 };

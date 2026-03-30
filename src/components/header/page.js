@@ -1,18 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import cookieInstance from "@/utils/cookieInstance";
+import { Context } from "@/app/context";
 const Header = () => {
   const router = useRouter();
+  const { state, dispatch } = useContext(Context);
+  const user = state.user;
   const [menuOpen, setMenuOpen] = useState(false);
-  const user = cookieInstance.getStorageObj("authDataTokenNode");
+
+  const handleLogOut = () => {
+    cookieInstance?.removeStorage("authDataTokenNode");
+    cookieInstance?.removeStorage("authDataTokenHolderIdNode");
+    localStorage.removeItem("authDataNode");
+    dispatch({ type: "SET_USER", payload: null });
+    dispatch({ type: "LOGOUT" });
+    router.refresh();
+    router.push("/");
+  }
   return (
     <header>
 
-      <div className="relative z-[21] flex items-center justify-between lg:px-16 lg:py-6" >
+      <div className="relative z-[100] flex items-center justify-between lg:px-16 lg:py-6" >
         {/* Logo */}
         <div className="flex items-center gap-3" style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
@@ -53,7 +65,7 @@ const Header = () => {
               </Link>
             </li>
 
-            <li>
+            <li className="gt_brdng_ps_btn">
               <button
                 // <Link
                 onClick={() => { router.push("/boarding-pass"); }}
@@ -67,14 +79,24 @@ const Header = () => {
                 Get Boarding Pass
               </button>
             </li>
-            {!user && (
+            {!user ? (
               <li>
-                <Link href="/login" className="hover:text-white">
+                <Link href="/login" style={{ cursor: "pointer" }} className="hover:text-white">
                   Login
                 </Link>
               </li>
-            )}
-
+            )
+              : (
+                <li style={{ cursor: "pointer" }}>
+                  <button onClick={() => {
+                    handleLogOut();
+                  }}
+                    className="hover:text-white"
+                    style={{ cursor: "pointer" }}>
+                    Logout
+                  </button>
+                </li>
+              )}
           </ul>
         </nav>
       </div>

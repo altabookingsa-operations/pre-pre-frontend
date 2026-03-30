@@ -1,74 +1,78 @@
-import CryptoJS from 'crypto-js';
-import Cookies from 'js-cookie';
+import CryptoJS from "crypto-js";
+import Cookies from "universal-cookie";
 
-const cookieInstance = (() => {
-  if (typeof window !== 'undefined') {
-    function cookieInstance() {}
+function getKey() {
+  return (
+    process.env.NEXT_PUBLIC_ENCRYPTION_KEY ||
+    process.env.ENCRYPTION_KEY ||
+    ""
+  );
+}
 
-    // Set encrypted cookie
-    cookieInstance.setStorage = function (key, value, options = {}) {
-      const encrypkey = process.env.ENCRYPTION_KEY || process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
-      const encryptedValue = CryptoJS.AES.encrypt(value, encrypkey).toString();
-      return Cookies.set(key, encryptedValue, options);
-    };
+const cookieInstance = {
+  setStorage(key, value) {
+    if (typeof window === "undefined") return;
 
-    // Set encrypted object in cookie
-    cookieInstance.setStorageObj = function (key, value, options = {}) {
-      const encrypkey = process.env.ENCRYPTION_KEY || process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
-      const encryptedValue = CryptoJS.AES.encrypt(JSON.stringify(value), encrypkey).toString();
-      return Cookies.set(key, encryptedValue, options);
-    };
+    const cookies = new Cookies();
+    const encryptedValue = CryptoJS.AES.encrypt(value, getKey()).toString();
 
-    // Get decrypted cookie
-    cookieInstance.getStorage = function (key) {
-      const encrypkey = process.env.ENCRYPTION_KEY || process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
-      const cookieValue = Cookies.get(key);
-      if (cookieValue) {
-        try {
-          const bytes = CryptoJS.AES.decrypt(cookieValue, encrypkey);
-          const decryptedText = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-          return decryptedText;
-        } catch (error) {
-          console.error('Error decrypting cookie:', error);
-          return '';
-        }
-      }
-      return '';
-    };
+    cookies.set(key, encryptedValue, {
+      maxAge: 172800,
+      path: "/",
+    });
+  },
 
-    // Get decrypted object from cookie
-    cookieInstance.getStorageObj = function (key) {
-      const encrypkey = process.env.ENCRYPTION_KEY || process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
-      const cookieValue = Cookies.get(key);
-      console.log("cookieValue", cookieValue)
-      if (cookieValue) {
-        try {
-          const bytes = CryptoJS.AES.decrypt(cookieValue, encrypkey);
-          const decryptedText = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-          return decryptedText;
-        } catch (error) {
-          console.error('Error decrypting cookie:', error);
-          return '';
-        }
-      }
-      return '';
-    };
+  setStorageObj(key, value) {
+    if (typeof window === "undefined") return;
 
-    // Remove cookie
-    cookieInstance.removeStorage = function (key) {
-      return Cookies.remove(key);
-    };
+    const cookies = new Cookies();
+    const encryptedValue = CryptoJS.AES.encrypt(
+      JSON.stringify(value),
+      getKey()
+    ).toString();
 
-    // Clear all cookies (note: this only removes cookies set by this domain)
-    cookieInstance.clearStorage = function () {
-      const allCookies = Cookies.get();
-      Object.keys(allCookies).forEach(key => {
-        Cookies.remove(key);
-      });
-    };
+    cookies.set(key, encryptedValue, {
+      maxAge: 172800,
+      path: "/",
+    });
+  },
 
-    return cookieInstance;
-  }
-})();
+  getStorage(key) {
+    if (typeof window === "undefined") return "";
+
+    try {
+      const cookies = new Cookies();
+      const encrypted = cookies.get(key);
+      if (!encrypted) return "";
+
+      const bytes = CryptoJS.AES.decrypt(encrypted, getKey());
+      return bytes.toString(CryptoJS.enc.Utf8);
+    } catch {
+      return "";
+    }
+  },
+
+  getStorageObj(key) {
+    if (typeof window === "undefined") return "";
+
+    try {
+      const cookies = new Cookies();
+      const encrypted = cookies.get(key);
+      if (!encrypted) return "";
+
+      const bytes = CryptoJS.AES.decrypt(encrypted, getKey());
+      return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch {
+      return "";
+    }
+  },
+
+  removeStorage(key) {
+    if (typeof window === "undefined") return;
+
+    const cookies = new Cookies();
+    cookies.remove(key, { path: "/" });
+  },
+};
 
 export default cookieInstance;

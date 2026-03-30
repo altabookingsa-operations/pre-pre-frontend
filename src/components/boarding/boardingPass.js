@@ -2,7 +2,7 @@ const BoardingPass = ({}) => {
     return (
     <section className="relative pb-[50px] lg:pb-[70px] w-full text-white bg-cover bg-center main-pre-pre-lnch-start ">
     <div className="text-center pt-[50px] pb-[20px] text-[#fff]">
-      <h1 className="text-[40px] font-semibold">Welcome Abroad, Maria!</h1>
+      <h1 className="text-[40px] font-semibold">Welcome Aboard, Maria!</h1>
       <p className="font-regular text-[16px]">You now have <span className="font-semibold text-[#04BCD7]">Early Access to Alta Booking</span></p>
     </div>
     <div className="max-w-[1417px] min-h-[513px] bg-center bg-cover m-[0_auto] relative brdng-pass-midd-bx" style={{backgroundImage: 'url(images/boarding-pass-back-img.png)'}}>
