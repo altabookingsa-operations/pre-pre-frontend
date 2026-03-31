@@ -147,7 +147,7 @@ const RegistrationPageMobile = () => {
         setFieldTouched,
       }) => (
         <Form>
-          <section className="relative pb-[50px] lg:pb-[70px] w-full text-white bg-cover bg-center brding-pass-registration min-h-[1100px]" style={{ backgroundImage: 'url(images/mobile-registration-back.png)' }}>
+          <section className="relative pb-[50px] lg:pb-[70px] w-full text-white bg-cover bg-center brding-pass-registration min-h-[1100px]">
             <div className="relative z-21 justify-between lg:px-16 lg:py-6 lg:pb-0 pt-[10px] ">
               {/* <div class="">
 <img src="images/logo.png" class="w-[230px] main-logo m-[0_auto] block lg:m-[0]">
@@ -197,8 +197,8 @@ const RegistrationPageMobile = () => {
                 </div>
                 <div className="px-[20px] lg:px-[30px] py-[20px]">
                   <div className="flex gap-[15px] text-[#fff] items-center">
-                    <div className="bg-[#1ABDD6] p-[8px_3px] after-shape-nw relative" style={{ borderBottomRightRadius: 10, borderTopRightRadius: 10 }}>
-                      <p className="uppercase">flight <span className="uppercase font-semibold bg-[#008397] p-[5px] after-shape-nw2 relative ml-[10px]" style={{ borderBottomRightRadius: 10, borderTopRightRadius: 10 }}>ab2026</span></p>
+                    <div className="after-shape-nw  bg-[#1ABDD6] p-[8px_3px] relative" style={{ borderBottomRightRadius: 10, borderTopRightRadius: 10 }}>
+                      <p className="uppercase">flight <span className=" after-shape-nw2 uppercase font-semibold bg-[#008397] p-[5px]  relative ml-[10px]" style={{ borderBottomRightRadius: 10, borderTopRightRadius: 10 }}>ab2026</span></p>
                     </div>
                     <h3 className="font-bold text-[20px] uppercase">check-in</h3>
                   </div>
