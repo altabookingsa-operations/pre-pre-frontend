@@ -1,5 +1,5 @@
 // hooks/useGetCityName.js
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import axiosFrontNodeInstance from "@/utils/axiosFrontNodeInstance";
 
@@ -29,5 +29,25 @@ export const useGetNationality = () => {
     },
     staleTime: 1000 * 60 * 60, // cache 1 hour
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useVerifyMobileOtp = (options = {}) => {
+  return useMutation({
+    mutationFn: async (data) => {
+      const res = await axiosFrontNodeInstance.post('/auth/verify-mobile-otp', data);
+      return res.data;
+    },
+    ...options
+  });
+};
+
+export const useVerifyEmailOtp = (options = {}) => {
+  return useMutation({
+    mutationFn: async (data) => {
+      const res = await axiosFrontNodeInstance.post('/auth/verify-email-otp', data);
+      return res.data;
+    },
+    ...options
   });
 };

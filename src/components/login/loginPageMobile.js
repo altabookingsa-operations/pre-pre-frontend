@@ -2,11 +2,13 @@
 import { useLogin } from '@/app/hooks/useLogin';
 import { Formik, Field, Form, ErrorMessage, setIn } from 'formik';
 import * as Yup from 'yup';
+import { useRouter } from 'next/navigation';
 const LoginPageMobile = () => {
+  const router = useRouter();
   const { mutate: login, isPending: loginLoading } =
     useLogin({
       onSuccess: (res) => {
-        
+        router.push('/boarding-pass');
       },
       onError: (error) => {
         console.log("error occured", error);

@@ -19,12 +19,8 @@ export default function BoardingPassIndex() {
             </>) :
             (
                 <>
-                    <div className="hidden xl:block">
-                        <BoardingPass />
-                    </div>
-                    <div className="block xl:hidden">
-                        <BoardingPassMobile />
-                    </div>
+                <BoardingPass />
+
                 </>
             )
 

@@ -3,9 +3,33 @@ import React, { useContext, useEffect } from "react";
 import Modal from "react-modal";
 import { Formik, Field, Form } from "formik";
 import { Context } from "@/app/context";
-const MobileOtpSection = ({ otpLength, hasError }) => {
+import { useVerifyMobileOtp, useVerifyEmailOtp } from "@/app/hooks/useRegistration";
+import { useBoardingPassCreate, useBoardingPassDetails } from "@/app/hooks/useBoardingPass";
+import { useLogin } from "@/app/hooks/useLogin";
+import { parsePhoneNumber } from "react-phone-number-input";
+import { useRouter } from "next/navigation";
+import { deviceType, browserName, browserVersion, osName } from 'react-device-detect';
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
+import axiosFrontNodeInstance from "@/utils/axiosFrontNodeInstance";
+const MobileOtpSection = ({ otpLength, setFieldValue }) => {
   const otpIndexes = Array.from({ length: otpLength });
  
+  const handleInput = (e, index) => {
+    const value = e.target.value;
+    if (value.length > 0 && index < otpLength - 1) {
+      const nextInput = document.getElementById(`otp${index + 2}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !e.target.value && index > 0) {
+      const prevInput = document.getElementById(`otp${index}`);
+      if (prevInput) prevInput.focus();
+    }
+  };
+
   return (
     <>
       <h4 className="font-medium text-[24px] pb-[20px] pt-[40px]">
@@ -19,6 +43,8 @@ const MobileOtpSection = ({ otpLength, hasError }) => {
             name={`otp${index + 1}`}
             type="text"
             maxLength="1"
+            onInput={(e) => handleInput(e, index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
             className="
               form-control
               w-12 h-12
@@ -38,9 +64,24 @@ const MobileOtpSection = ({ otpLength, hasError }) => {
   );
 };
  
-const EmailOtpSection = ({ otpLength, hasError }) => {
+const EmailOtpSection = ({ otpLength, setFieldValue }) => {
   const otpIndexes = Array.from({ length: otpLength });
  
+  const handleInput = (e, index) => {
+    const value = e.target.value;
+    if (value.length > 0 && index < otpLength - 1) {
+      const nextInput = document.getElementById(`eotp${index + 2}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !e.target.value && index > 0) {
+      const prevInput = document.getElementById(`eotp${index}`);
+      if (prevInput) prevInput.focus();
+    }
+  };
+
   return (
     <>
       <h4>Enter the email code here:</h4>
@@ -52,6 +93,8 @@ const EmailOtpSection = ({ otpLength, hasError }) => {
             name={`eotp${index + 1}`}
             type="text"
             maxLength="1"
+            onInput={(e) => handleInput(e, index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
             className="
               form-control
               w-12 h-12
@@ -87,7 +130,111 @@ const customStyles = {
   }
 };
  
-const VerifyNumberModal = ({setType, requireEmailOtp = false}) => {
+const VerifyNumberModal = ({setType, registrationValues, requireEmailOtp = false}) => {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = React.useState(requireEmailOtp ? 'email' : 'mobile');
+
+  const { mutate: verifyMobileOtp, isLoading: isVerifyingMobile } = useVerifyMobileOtp({
+    onSuccess: (data) => {
+      console.log("Mobile Verification success", data);
+      setCurrentStep('email');
+    },
+    onError: (error) => {
+      console.error("Mobile Verification failed", error);
+      alert("Mobile verification failed. Please check the OTP and try again.");
+    }
+  });
+
+  const { mutateAsync: createBoardingPass } = useBoardingPassCreate();
+  const { mutateAsync: getBoardingPassDetails } = useBoardingPassDetails();
+  const { mutateAsync: login } = useLogin();
+
+  const { mutate: verifyEmailOtp, isLoading: isVerifyingEmail } = useVerifyEmailOtp({
+    onSuccess: async (data) => {
+      console.log("Email Verification success", data);
+      const userId = data?.id;
+      if (userId) {
+        try {
+          await createBoardingPass(userId);
+          // Implicit login
+          await login({
+            email: registrationValues?.email,
+            password: registrationValues?.password
+          });
+          router.push('/boarding-pass');
+        } catch (error) {
+          console.error("Error in registration/login chain", error);
+          router.push('/login');
+        }
+      } else {
+        router.push('/login');
+      }
+    },
+    onError: (error) => {
+      console.error("Email Verification failed", error);
+      alert("Email verification failed. Please check the OTP and try again.");
+    }
+  });
+
+  const getGeoLocation = async () => {
+    try {
+      const res = await axios.get('https://pro.ip-api.com/json/?key=OviSLFVZm5We5p7');
+      return res.data;
+    } catch (error) {
+      console.error("Geo Location fetch failed", error);
+      return {};
+    }
+  };
+
+  const handleEmailOtpSubmit = async (values) => {
+    const otpCode = `${values.eotp1}${values.eotp2}${values.eotp3}${values.eotp4}${values.eotp5}${values.eotp6}`;
+    if (otpCode.length !== 6) {
+      alert("Please enter a 6-digit email OTP");
+      return;
+    }
+
+    const geoData = await getGeoLocation();
+    const pn = registrationValues?.mobile_number ? parsePhoneNumber(registrationValues.mobile_number) : null;
+
+    const payload = {
+      title: registrationValues?.title || "Mr.",
+      gender: registrationValues?.gender || "Male",
+      dob: registrationValues?.dateOfBirth ? new Date(registrationValues.dateOfBirth).toISOString().split('T')[0] : "2008-01-27",
+      currency_code: registrationValues?.currency_code || "EUR",
+      first_name: registrationValues?.firstName || "",
+      last_name: registrationValues?.lastName || "",
+      nationality_id: parseInt(registrationValues?.nationality) || 4,
+      email: registrationValues?.email || "",
+      password: registrationValues?.password || "",
+      iso: geoData.countryCode || "IN",
+      dial_code: pn ? `+${pn.countryCallingCode}` : "+91",
+      mobile_number: pn ? pn.nationalNumber : "",
+      currency_id: registrationValues?.currency_id || 17,
+      device_type: deviceType || "Desktop",
+      screen_width: window.innerWidth,
+      screen_height: window.innerHeight,
+      browser_name: browserName || "Chrome",
+      browser_version: browserVersion || "",
+      os_type: osName || "Windows",
+      reg_start: new Date().toISOString(),
+      city: geoData.city || "",
+      country: geoData.country || "",
+      country_code: geoData.countryCode || "",
+      lat: geoData.lat || 0,
+      lon: geoData.lon || 0,
+      ip: geoData.query || "",
+      region: geoData.region || "",
+      region_name: geoData.regionName || "",
+      timezone: geoData.timezone || "",
+      zip: geoData.zip || "",
+      session_id: uuidv4(),
+      otp: otpCode,
+      home_airport: registrationValues?.home_airport || "",
+      platform: registrationValues?.platform || "PRETOPRE"
+    };
+
+    verifyEmailOtp(payload);
+  };
   useEffect(() => {
     if (typeof window !== "undefined") {
       Modal.setAppElement(document.body);
@@ -244,10 +391,31 @@ const VerifyNumberModal = ({setType, requireEmailOtp = false}) => {
         contentLabel="Verify Mobile Modal"
         id="modalOtp-verify-mobile"
       >
-        <Formik enableReinitialize={false}>
-          {({ errors, setFieldValue }) => {
+        <Formik 
+          initialValues={{ otp1: '', otp2: '', otp3: '', otp4: '', otp5: '', otp6: '' }}
+          onSubmit={(values) => {
+            const otpCode = `${values.otp1}${values.otp2}${values.otp3}${values.otp4}${values.otp5}${values.otp6}`;
+            if (otpCode.length !== 6) {
+              alert("Please enter a 6-digit OTP");
+              return;
+            }
+
+            const pn = registrationValues?.mobile_number ? parsePhoneNumber(registrationValues.mobile_number) : null;
+            
+            const payload = {
+              mobile_number: pn ? `+${pn.countryCallingCode}${pn.nationalNumber}` : '',
+              otp: otpCode,
+              first_name: registrationValues?.firstName || '',
+              last_name: registrationValues?.lastName || '',
+              email: registrationValues?.email || '',
+            };
+
+            verifyMobileOtp(payload);
+          }}
+        >
+          {({ errors, setFieldValue, handleSubmit }) => {
             return (
-              <Form autoComplete="off">
+              <Form autoComplete="off" onSubmit={handleSubmit}>
                 <div className="partner-verfy-number-section">
                   <div className="prtnr-vrfy-close-btn" onClick={()=>{dispatch({type:"BACKGROUND_SHOW", payload: true});setType('register');}}>
                     <img src="/images/close.png"  alt=""/>
@@ -259,14 +427,16 @@ const VerifyNumberModal = ({setType, requireEmailOtp = false}) => {
                     <h5 className="text-[16px]">
                       A text message with a verification code has been sent
                       to{" "}
+                      <span>{registrationValues?.mobile_number}</span>
                     </h5>
-                    <MobileOtpSection otpLength={6} />
+                    <MobileOtpSection otpLength={6} setFieldValue={setFieldValue} />
                   </div>
                   <button
                     type="submit"
                     className="btn prtnr-verify-new-btn p-[10px] w-full bg-[#01bdd6] text-[#fff]"
+                    disabled={isVerifyingMobile}
                   >
-                    Verify
+                    {isVerifyingMobile ? "Verifying..." : "Verify"}
                   </button>
                 </div>
               </Form>
@@ -285,10 +455,13 @@ const VerifyNumberModal = ({setType, requireEmailOtp = false}) => {
       contentLabel="Verify Email Modal"
       id="modalOtp-verify-email"
     >
-      <Formik enableReinitialize={false}>
-        {({ errors, setFieldValue }) => {
+      <Formik 
+        initialValues={{ eotp1: '', eotp2: '', eotp3: '', eotp4: '', eotp5: '', eotp6: '' }}
+        onSubmit={handleEmailOtpSubmit}
+      >
+        {({ errors, setFieldValue, handleSubmit }) => {
           return (
-            <Form autoComplete="off">
+            <Form autoComplete="off" onSubmit={handleSubmit}>
               <div className="partner-verfy-number-section">
                 <div className="prtnr-vrfy-close-btn" onClick={()=>setType('register')}>
                   <img src="/images/close.png"  alt=""/>
@@ -299,13 +472,17 @@ const VerifyNumberModal = ({setType, requireEmailOtp = false}) => {
                 <div className="partner-verfy-number-middle">
                   <h5 className="text-[16px]">
                     A verification code has been sent to{" "}
-                    <span>@altabooking.com</span>
+                    <span>{registrationValues?.email}</span>
                   </h5>
- 
-                  <EmailOtpSection otpLength={6} />
+
+                  <EmailOtpSection otpLength={6} setFieldValue={setFieldValue} />
                 </div>
-                <button type="submit" className="btn prtnr-verify-new-btn p-[10px] w-full bg-[#01bdd6] text-[#fff]">
-                  Verify
+                <button 
+                  type="submit" 
+                  className="btn prtnr-verify-new-btn p-[10px] w-full bg-[#01bdd6] text-[#fff]"
+                  disabled={isVerifyingEmail}
+                >
+                  {isVerifyingEmail ? "Verifying..." : "Verify"}
                 </button>
               </div>
             </Form>
@@ -314,7 +491,7 @@ const VerifyNumberModal = ({setType, requireEmailOtp = false}) => {
       </Formik>
     </Modal>
   );
-  return <>{requireEmailOtp ? renderEmailModal() : renderMobileModal()}</>;
+  return <>{currentStep === 'email' ? renderEmailModal() : renderMobileModal()}</>;
 };
  
 export const MobileVerifyNumberModal = (props) => (

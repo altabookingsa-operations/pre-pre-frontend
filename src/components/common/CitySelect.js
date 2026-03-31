@@ -12,7 +12,7 @@ const CitySelect = ({
     const customStyles = {
         control: (provided) => ({
             ...provided,
-            backgroundColor: "transparent",
+            backgroundColor: "#fff0",
             color: "#000",
             opacity: "1",
             border: "none!important",
@@ -33,20 +33,22 @@ const CitySelect = ({
 
         placeholder: (provided) => ({
             ...provided,
-            color: "#888",
+            color: "#fff",
         }),
 
         menu: (provided) => ({
             ...provided,
-            backgroundColor: "#fff",
-            color: "#000",
+            backgroundColor: "#fff0",
+            color: "#fff",
         }),
 
         option: (provided, state) => ({
             ...provided,
-            backgroundColor: state.isFocused ? "#eee" : "#fff",
-            color: "#000",
+            backgroundColor: state.isFocused ? "#1967d2" : "#000",
+            color: "#fff",
             cursor: "pointer",
+            position: "relative",
+           
         }),
     };
     return (

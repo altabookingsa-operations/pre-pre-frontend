@@ -23,6 +23,7 @@ const RegistrationPageMobile = () => {
     lastName: '',
     homeCity: null,
   });
+  const [registrationValues, setRegistrationValues] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const today = new Date();
   const maxSelectableDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
@@ -42,7 +43,7 @@ const RegistrationPageMobile = () => {
   }));
 
   if (type === 'otp') {
-    return <VerifyNumberModal setType={setType} />;
+    return <VerifyNumberModal setType={setType} registrationValues={registrationValues} />;
   }
   return (
     <Formik
@@ -57,6 +58,9 @@ const RegistrationPageMobile = () => {
         mobile_number: '',
         nationality: '',
         dateOfBirth: '',
+        gender: 'Male',
+        currency_code: 'EUR',
+        currency_id: 17,
       }}
       validationSchema={Yup.object({
         firstName: Yup.string()
@@ -113,6 +117,12 @@ const RegistrationPageMobile = () => {
             dial_code: pn ? `+${pn.countryCallingCode}` : '',
             email: values.email || formData.email || ''
           };
+          const homeAirportStr = formData.homeCity ? `${formData.homeCity.cityname} (${formData.homeCity.iata || ''})` : '';
+          setRegistrationValues({
+            ...values,
+            home_airport: homeAirportStr,
+            platform: 'PRETOPRE'
+          });
           await axiosFrontNodeInstance.post('/auth/send-mobile-verification-otp', payload);
           setType('otp');
         } catch (error) {

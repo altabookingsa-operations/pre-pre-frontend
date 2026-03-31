@@ -22,6 +22,7 @@ const RegistrationPage = ({ }) => {
     lastName: '',
     homeCity: null,
   });
+  const [registrationValues, setRegistrationValues] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const today = new Date();
   const maxSelectableDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
@@ -41,7 +42,7 @@ const RegistrationPage = ({ }) => {
   }));
 
   if (type === 'otp') {
-    return <VerifyNumberModal setType={setType} />;
+    return <VerifyNumberModal setType={setType} registrationValues={registrationValues} />;
   }
   console.log("inputValue", inputValue);
   return (
@@ -58,6 +59,9 @@ const RegistrationPage = ({ }) => {
           mobile_number: '',
           nationality: '',
           dateOfBirth: '',
+          gender: 'Male',
+          currency_code: 'EUR',
+          currency_id: 17,
         }}
         validationSchema={Yup.object({
           firstName: Yup.string()
@@ -114,6 +118,12 @@ const RegistrationPage = ({ }) => {
               dial_code: pn ? `+${pn.countryCallingCode}` : '',
               email: values.email || formData.email || ''
             };
+            const homeAirportStr = formData.homeCity ? `${formData.homeCity.cityname} (${formData.homeCity.iata || ''})` : '';
+            setRegistrationValues({
+              ...values,
+              home_airport: homeAirportStr,
+              platform: 'PRETOPRE'
+            });
             await axiosFrontNodeInstance.post('/auth/send-mobile-verification-otp', payload);
             setType('otp');
           } catch (error) {
@@ -294,7 +304,7 @@ const RegistrationPage = ({ }) => {
                       </div>
                       <div className="w-full">
                         <label className="text-[16px] font-regular mb-2 block">Nationality*</label>
-                        <Field as="select" name="nationality" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8] [&>option]:text-black">
+                        <Field as="select" name="nationality" className="bg-[#00000038] border border-slate-700 rounded-lg p-3 w-full shadow-[inset_0px_2px_14px_0px_#000000b8] [&>option]:text-black select-n">
                           <option value="" disabled>Nationality</option>
                           {nationalityData?.map((item, index) => (
                             <option key={item?.id || index} value={item?.id || item?.nationality || item?.name || item}>
